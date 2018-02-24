@@ -77,6 +77,22 @@ class PuyoModel():
 
         return chain
 
+    def gravitize(self):
+        for x in range(self.horizontal_cells):
+            for y0 in range(self.vertical_cells):
+                idx0 = self.cell_index(x, y0)
+                color0 = self.cells[idx0]
+                if color0 == 0:
+                    for y1 in range(y0 + 1, self.vertical_cells - y0 - 1):
+                        idx1 = self.cell_index(x, y1)
+                        color1 = self.cells[idx1]
+                        if color1 != 0:
+                            self.cells[idx0] = color1
+                            self.cells[idx1] = 0
+                            break
+
+        return self.cells
+
     def cell_index(self, x, y):
         return x + y * self.horizontal_cells
 
@@ -97,4 +113,7 @@ if __name__ == '__main__':
     model.dump()
     print("\n")
     model.erase()
+    model.dump()
+    print("\n")
+    model.gravitize()
     model.dump()

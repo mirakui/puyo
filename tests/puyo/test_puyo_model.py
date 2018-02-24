@@ -51,3 +51,23 @@ class TestPuyoModel(TestCase):
 443002
         """)
         self.assertEqual(m.cells, expected.cells)
+
+    def test_gravitize(self):
+        m = PuyoModel()
+        m.parse_cells("""
+443440
+010001
+112002
+400020
+300011
+        """)
+        m.gravitize()
+
+        expected = PuyoModel()
+        expected.parse_cells("""
+400000
+140041
+413022
+312411
+        """)
+        self.assertEqual(m.cells, expected.cells)
