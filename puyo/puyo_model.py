@@ -38,14 +38,14 @@ class PuyoModel():
         for y in range(self.vertical_cells):
             for x in range(self.horizontal_cells):
                 chain = [self.cell_index(x, y)]
-                self._mark_erasable_chain(x, y, marks, chain)
+                self._find_chain(x, y, marks, chain)
                 if len(chain) >= self.min_chain_size:
                     for idx in chain:
                         self.cells[idx] = 0
 
         return self.cells
 
-    def _mark_erasable_chain(self, x, y, marks, chain, chain_color=0):
+    def _find_chain(self, x, y, marks, chain, chain_color=0):
         idx = self.cell_index(x, y)
 
         if marks[idx] != ErasingMark.Unmarked:
@@ -62,16 +62,16 @@ class PuyoModel():
         marks[idx] = ErasingMark.Checking
 
         if 0 < x:
-            self._mark_erasable_chain(x-1, y, marks, chain=chain, chain_color=color)
+            self._find_chain(x-1, y, marks, chain=chain, chain_color=color)
 
         if x + 1 < self.horizontal_cells:
-            self._mark_erasable_chain(x+1, y, marks, chain=chain, chain_color=color)
+            self._find_chain(x+1, y, marks, chain=chain, chain_color=color)
 
         if 0 < y:
-            self._mark_erasable_chain(x, y-1, marks, chain=chain, chain_color=color)
+            self._find_chain(x, y-1, marks, chain=chain, chain_color=color)
 
         if y + 1 < self.vertical_cells:
-            self._mark_erasable_chain(x, y+1, marks, chain=chain, chain_color=color)
+            self._find_chain(x, y+1, marks, chain=chain, chain_color=color)
 
         marks[idx] = ErasingMark.Marked
 
