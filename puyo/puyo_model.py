@@ -33,6 +33,7 @@ class PuyoModel():
         return self.cells
 
     def erase(self):
+        erased = False
         marks = [ErasingMark.Unmarked for i in range(len(self.cells))]
 
         for y in range(self.vertical_cells):
@@ -42,8 +43,9 @@ class PuyoModel():
                 if len(chain) >= self.min_chain_size:
                     for idx in chain:
                         self.cells[idx] = 0
+                        erased = True
 
-        return self.cells
+        return erased
 
     def _find_chain(self, x, y, marks, chain, chain_color=0):
         idx = self.cell_index(x, y)
@@ -78,6 +80,7 @@ class PuyoModel():
         return chain
 
     def gravitize(self):
+        gravitized = False
         for x in range(self.horizontal_cells):
             for y0 in range(self.vertical_cells):
                 idx0 = self.cell_index(x, y0)
@@ -89,9 +92,21 @@ class PuyoModel():
                         if color1 != 0:
                             self.cells[idx0] = color1
                             self.cells[idx1] = 0
+                            gravitized = True
                             break
 
-        return self.cells
+        return gravitized
+
+    def gravitize_and_erase(self):
+        erased = True
+        combo = 0
+        while erased:
+            self.gravitize()
+            erased = self.erase()
+            if erased:
+                combo += 1
+                self.max_combo = max(combo, self.max_combo)
+        return combo
 
     def cell_index(self, x, y):
         return x + y * self.horizontal_cells
@@ -105,15 +120,14 @@ class ErasingMark(Enum):
 if __name__ == '__main__':
     model = PuyoModel()
     model.parse_cells("""
-123441
-233141
-334341
-443442
+004000
+300000
+444010
+312441
+331221
+112441
     """)
     model.dump()
     print("\n")
-    model.erase()
-    model.dump()
-    print("\n")
-    model.gravitize()
+    model.gravitize_and_erase()
     model.dump()
