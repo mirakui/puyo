@@ -1,10 +1,10 @@
 from unittest import TestCase
-from puyo.puyo_model import PuyoModel
+from puyo.board import Board
 
-class TestPuyoModel(TestCase):
+class TestBoard(TestCase):
 
     def test_parse_cells(self):
-        m = PuyoModel()
+        m = Board()
         text = """
 21
 111
@@ -34,7 +34,7 @@ class TestPuyoModel(TestCase):
         )
 
     def test_erase(self):
-        m = PuyoModel()
+        m = Board()
         m.parse_cells("""
 123441
 233141
@@ -43,7 +43,7 @@ class TestPuyoModel(TestCase):
         """)
         m.erase()
 
-        expected = PuyoModel()
+        expected = Board()
         expected.parse_cells("""
 120001
 200101
@@ -53,7 +53,7 @@ class TestPuyoModel(TestCase):
         self.assertEqual(m.cells, expected.cells)
 
     def test_gravitize(self):
-        m = PuyoModel()
+        m = Board()
         m.parse_cells("""
 443440
 010001
@@ -63,7 +63,7 @@ class TestPuyoModel(TestCase):
         """)
         m.gravitize()
 
-        expected = PuyoModel()
+        expected = Board()
         expected.parse_cells("""
 400000
 140041
@@ -73,7 +73,7 @@ class TestPuyoModel(TestCase):
         self.assertEqual(m.cells, expected.cells)
 
     def test_gravitize_and_erase(self):
-        m = PuyoModel()
+        m = Board()
         m.parse_cells("""
 004000
 300000
@@ -84,7 +84,7 @@ class TestPuyoModel(TestCase):
         """)
         m.gravitize_and_erase()
 
-        expected = PuyoModel()
+        expected = Board()
         expected.parse_cells("""
 000000
 000000

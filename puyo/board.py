@@ -1,6 +1,6 @@
 from enum import Enum
 
-class PuyoModel():
+class Board():
     def __init__(self, vertical_cells=13, horizontal_cells=6, colors=4, min_chain_size=4):
         self.vertical_cells = vertical_cells
         self.horizontal_cells = horizontal_cells
@@ -118,7 +118,7 @@ class ErasingMark(Enum):
     Marked = 'marked'
 
 if __name__ == '__main__':
-    model = PuyoModel()
+    model = Board()
     model.parse_cells("""
 004000
 300000
