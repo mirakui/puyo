@@ -10,6 +10,9 @@ class Board():
 
         self.zerofill_cells()
 
+    def cell(self, x, y):
+        return self.cells[self.cell_index(x, y)]
+
     def dump(self):
         for y in reversed(range(self.vertical_cells)):
             for x in range(self.horizontal_cells):
