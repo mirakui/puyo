@@ -11,7 +11,7 @@ class Cursor():
             self.horizontal_cells,
             self.horizontal_cells * 2 - 1,
             self.horizontal_cells * 3 - 1,
-            self.horizontal_cells * 4 - 3
+            self.horizontal_cells * 4 - 2
         ]
 
     def reset_position(self):
@@ -24,7 +24,7 @@ class Cursor():
         for i in range(len(self.ranges) - 1):
             rng = range(self.ranges[i], self.ranges[i+1])
             if self.position in rng:
-                self._move(direction, rng)
+                return self._move(direction, rng)
                 break
 
         return self.position
@@ -34,6 +34,48 @@ class Cursor():
             self.position = max(rng.start, self.position - 1)
         elif direction == Direction.Right:
             self.position = min(self.position + 1, rng.stop - 1)
+        return self.position
+
+    def turn(self, direction):
+        if direction == Direction.Left:
+            self.set_position(self._turn_left(self.position))
+        elif direction == Direction.Right:
+            self.set_position(self._turn_right(self.position))
+
+    def _turn_left(self, i):
+        if i in range(self.ranges[0], self.ranges[1]):
+            return max(i + (self.horizontal_cells - 1), self.horizontal_cells)
+        elif i in range(self.ranges[1], self.ranges[2]):
+            return i + self.horizontal_cells
+        elif i in range(self.ranges[2], self.ranges[3]):
+            return min(i + self.horizontal_cells, self.ranges[4] - 1)
+        elif i in range(self.ranges[3], self.ranges[4]):
+            return (i + 1) % self.horizontal_cells
+
+    def _turn_right(self, i):
+        if i in range(self.ranges[0], self.ranges[1]):
+            return min(i + self.ranges[3], self.ranges[4] - 1)
+        elif i in range(self.ranges[1], self.ranges[2]):
+            return i - self.horizontal_cells + 1
+        elif i in range(self.ranges[2], self.ranges[3]):
+            return max(i - self.horizontal_cells, self.horizontal_cells)
+        elif i in range(self.ranges[3], self.ranges[4]):
+            return i - self.horizontal_cells
+
+    def get_axis(self):
+        i = self.position
+        if i in range(self.ranges[0], self.ranges[1]):
+            return [i, i]
+        elif i in range(self.ranges[1], self.ranges[2]):
+            j = i % self.horizontal_cells
+            return [j, j + 1]
+        elif i in range(self.ranges[2], self.ranges[3]):
+            j = (i + 1) % self.horizontal_cells
+            return [j, j]
+        elif i in range(self.ranges[3], self.ranges[4]):
+            j = (i + 1) % self.horizontal_cells
+            return [j + 1, j]
+
 
 class Direction(Enum):
     Left = "left"
