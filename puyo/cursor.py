@@ -25,7 +25,6 @@ class Cursor():
             rng = range(self.ranges[i], self.ranges[i+1])
             if self.position in rng:
                 return self._move(direction, rng)
-                break
 
         return self.position
 
@@ -62,21 +61,29 @@ class Cursor():
         elif i in range(self.ranges[3], self.ranges[4]):
             return i - self.horizontal_cells
 
-    def get_axis(self):
-        i = self.position
+    def get_axis(self, position=None):
+        if isinstance(position, int):
+            i = position
+        else:
+            i = self.position
+
         if i in range(self.ranges[0], self.ranges[1]):
-            return [i, i]
+            return [[i, 1], [i, 2]]
         elif i in range(self.ranges[1], self.ranges[2]):
             j = i % self.horizontal_cells
-            return [j, j + 1]
+            return [[j + 1, 1], [j, 1]]
         elif i in range(self.ranges[2], self.ranges[3]):
             j = (i + 1) % self.horizontal_cells
-            return [j, j]
+            return [[j, 1], [j, 0]]
         elif i in range(self.ranges[3], self.ranges[4]):
             j = (i + 1) % self.horizontal_cells
-            return [j + 1, j]
-
+            return [[j, 1], [j + 1, 1]]
 
 class Direction(Enum):
     Left = "left"
     Right = "right"
+
+if __name__ == '__main__':
+    c = Cursor()
+    for i in range(22):
+        print(i, c.get_axis(position=i))
