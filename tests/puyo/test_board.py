@@ -72,6 +72,43 @@ class TestBoard(TestCase):
         """)
         self.assertEqual(m.cells, expected.cells)
 
+    def test_gravitize2(self):
+        m = Board()
+        m.parse_cells("""
+002000
+004000
+000000
+000000
+000000
+000000
+000000
+000000
+300000
+444110
+312440
+331221
+112441
+        """)
+        m.gravitize()
+
+        expected = Board()
+        expected.parse_cells("""
+000000
+000000
+000000
+000000
+000000
+000000
+000000
+002000
+304000
+444110
+312440
+331221
+112441
+        """)
+        self.assertEqual(m.cells, expected.cells)
+
     def test_gravitize_and_erase(self):
         m = Board()
         m.parse_cells("""

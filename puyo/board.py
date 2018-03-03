@@ -13,6 +13,9 @@ class Board():
     def cell(self, x, y):
         return self.cells[self.cell_index(x, y)]
 
+    def set_cell(self, x, y, cell):
+        self.cells[self.cell_index(x, y)] = cell
+
     def dump(self):
         for y in reversed(range(self.vertical_cells)):
             for x in range(self.horizontal_cells):
@@ -89,7 +92,7 @@ class Board():
                 idx0 = self.cell_index(x, y0)
                 color0 = self.cells[idx0]
                 if color0 == 0:
-                    for y1 in range(y0 + 1, self.vertical_cells - y0 - 1):
+                    for y1 in range(y0 + 1, self.vertical_cells):
                         idx1 = self.cell_index(x, y1)
                         color1 = self.cells[idx1]
                         if color1 != 0:

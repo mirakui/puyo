@@ -18,7 +18,7 @@ class PuyoGame(Widget):
 
         self.board = Board()
         self.board.parse_cells("""
-004000
+000000
 300000
 444110
 312440
@@ -28,7 +28,7 @@ class PuyoGame(Widget):
         self.deck = Deck()
         self.cursor = Cursor()
 
-        self._running_gravitize_and_erase = False
+        self.erasing = False
 
     def update(self):
         self.render_board()
@@ -94,8 +94,11 @@ class PuyoGame(Widget):
         # If we hit escape, release the keyboard
         if keycode[1] == 'escape':
             keyboard.release()
-        elif keycode[1] == 'down':
-            self._gravitize()
+        elif not self.erasing and keycode[1] == 'down':
+            self.draw_hand()
+            self.gravitize()
+            self.render_board()
+            self.render_cursor()
         elif keycode[1] == 'left':
             self.cursor.move(Direction.Left)
             self.render_cursor()
@@ -109,20 +112,31 @@ class PuyoGame(Widget):
             self.cursor.turn(Direction.Right)
             self.render_cursor()
 
-
         # Return True to accept the key. Otherwise, it will be used by
         # the system.
         return True
 
-    def _gravitize(self, dt=0.0):
+    def draw_hand(self):
+        hand = self.deck.draw()
+        axis = self.cursor.axis()
+
+        self.board.set_cell(axis[0][0], axis[0][1] + self.board.vertical_cells - 3, hand[0])
+        self.board.set_cell(axis[1][0], axis[1][1] + self.board.vertical_cells - 3, hand[1])
+
+    def gravitize(self, dt=0.0):
         if self.board.gravitize():
             self.update()
-            Clock.schedule_once(self._erase, 0.5)
+            self.erasing = True
+            Clock.schedule_once(self.erase, 0.5)
+        else:
+            self.erasing = False
 
-    def _erase(self, dt=0.0):
+    def erase(self, dt=0.0):
         if self.board.erase():
             self.update()
-            Clock.schedule_once(self._gravitize, 0.5)
+            Clock.schedule_once(self.gravitize, 0.5)
+        else:
+            self.erasing = False
 
 class PuyoApp(App):
     def build(self):
