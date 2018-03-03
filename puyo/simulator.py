@@ -7,6 +7,8 @@ from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.core.window import Window
 from board import Board
+from deck import Deck
+from cursor import Cursor, Direction
 
 class PuyoGame(Widget):
     def __init__(self, **kwargs):
@@ -23,30 +25,60 @@ class PuyoGame(Widget):
 331221
 112441
         """)
+        self.deck = Deck()
+        self.cursor = Cursor()
 
         self._running_gravitize_and_erase = False
 
     def update(self):
         self.render_board()
+        self.render_cursor()
 
     def render_board(self):
-        with self.canvas:
-            for x in range(self.board.horizontal_cells):
-                for y in range(self.board.vertical_cells):
-                    cell = self.board.cell(x, y)
-                    if cell == 1:
-                        Color(1, 0, 0, 1, mode='rgba')
-                    elif cell == 2:
-                        Color(0, 1, 0, 1, mode='rgba')
-                    elif cell == 3:
-                        Color(0, 0, 1, 1, mode='rgba')
-                    elif cell == 4:
-                        Color(1, 1, 0, 1, mode='rgba')
-                    else:
-                        Color(0, 0, 0, 1, mode='rgba')
-                        # continue
+        for x in range(self.board.horizontal_cells):
+            for y in range(self.board.vertical_cells):
+                cell = self.board.cell(x, y)
+                self.render_puyo_in_grid(pos=(x, y), cell=cell)
 
-                    Ellipse(pos=(x*60, y*50), size=(60, 40))
+    def render_puyo(self, pos, cell):
+        with self.canvas:
+            if cell == 1:
+                Color(1, 0, 0, 1, mode='rgba')
+            elif cell == 2:
+                Color(0, 1, 0, 1, mode='rgba')
+            elif cell == 3:
+                Color(0, 0, 1, 1, mode='rgba')
+            elif cell == 4:
+                Color(1, 1, 0, 1, mode='rgba')
+            else:
+                Color(0, 0, 0, 1, mode='rgba')
+
+            Ellipse(pos=pos, size=(60, 40))
+
+    def clear_hand(self):
+        with self.canvas:
+            Color(0, 0, 0, 1, mode='rgba')
+            Rectangle(
+                pos=(0, self.board.vertical_cells * 50),
+                size=(self.board.horizontal_cells * 60, 3 * 50)
+            )
+
+    def render_cursor(self):
+        hand = self.deck.hand()
+        axis = self.cursor.axis()
+
+        self.clear_hand()
+        self.render_puyo_in_grid(
+            pos=(axis[0][0], axis[0][1] + self.board.vertical_cells),
+            cell=hand[0]
+        )
+        self.render_puyo_in_grid(
+            pos=(axis[1][0], axis[1][1] + self.board.vertical_cells),
+            cell=hand[1]
+        )
+
+    def render_puyo_in_grid(self, pos, cell):
+        self.render_puyo(pos=(pos[0]*60, pos[1]*50), cell=cell)
 
     def keyboard_closed(self):
         print('My keyboard have been closed!')
@@ -64,6 +96,19 @@ class PuyoGame(Widget):
             keyboard.release()
         elif keycode[1] == 'down':
             self._gravitize()
+        elif keycode[1] == 'left':
+            self.cursor.move(Direction.Left)
+            self.render_cursor()
+        elif keycode[1] == 'right':
+            self.cursor.move(Direction.Right)
+            self.render_cursor()
+        elif keycode[1] == 'z':
+            self.cursor.turn(Direction.Left)
+            self.render_cursor()
+        elif keycode[1] == 'x':
+            self.cursor.turn(Direction.Right)
+            self.render_cursor()
+
 
         # Return True to accept the key. Otherwise, it will be used by
         # the system.
