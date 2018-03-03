@@ -61,7 +61,7 @@ class Cursor():
         elif i in range(self.ranges[3], self.ranges[4]):
             return i - self.horizontal_cells
 
-    def get_axis(self, position=None):
+    def axis(self, position=None):
         if isinstance(position, int):
             i = position
         else:
@@ -86,4 +86,4 @@ class Direction(Enum):
 if __name__ == '__main__':
     c = Cursor()
     for i in range(22):
-        print(i, c.get_axis(position=i))
+        print(i, c.axis(position=i))

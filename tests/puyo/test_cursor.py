@@ -74,7 +74,7 @@ class TestCursor(TestCase):
             cursor.turn(Direction.Right)
             self.assertEqual(cursor.position, table[i])
 
-    def test_get_axis(self):
+    def test_axis(self):
         cursor = Cursor()
         table = [
             # 0-5
@@ -107,4 +107,4 @@ class TestCursor(TestCase):
 
         for i in range(len(table)):
             cursor.set_position(i)
-            self.assertEqual(cursor.get_axis(), table[i])
+            self.assertEqual(cursor.axis(), table[i])
