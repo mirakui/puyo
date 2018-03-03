@@ -33,6 +33,7 @@ class PuyoGame(Widget):
     def update(self):
         self.render_board()
         self.render_cursor()
+        self.render_hand()
 
     def render_board(self):
         for x in range(self.board.horizontal_cells):
@@ -80,6 +81,26 @@ class PuyoGame(Widget):
     def render_puyo_in_grid(self, pos, cell):
         self.render_puyo(pos=(pos[0]*60, pos[1]*50), cell=cell)
 
+    def render_hand(self):
+        hand = self.deck.hand()
+
+        self.render_puyo_in_grid(
+            pos=(self.board.horizontal_cells + 2, self.board.vertical_cells - 2),
+            cell=hand[2]
+        )
+        self.render_puyo_in_grid(
+            pos=(self.board.horizontal_cells + 2, self.board.vertical_cells - 1),
+            cell=hand[3]
+        )
+        self.render_puyo_in_grid(
+            pos=(self.board.horizontal_cells + 3, self.board.vertical_cells - 2),
+            cell=hand[4]
+        )
+        self.render_puyo_in_grid(
+            pos=(self.board.horizontal_cells + 3, self.board.vertical_cells - 1),
+            cell=hand[5]
+        )
+
     def keyboard_closed(self):
         print('My keyboard have been closed!')
         self.keyboard.unbind(on_key_down=self.on_key_down)
@@ -119,9 +140,12 @@ class PuyoGame(Widget):
     def draw_hand(self):
         hand = self.deck.draw()
         axis = self.cursor.axis()
+        self.cursor.reset_position()
 
         self.board.set_cell(axis[0][0], axis[0][1] + self.board.vertical_cells - 3, hand[0])
         self.board.set_cell(axis[1][0], axis[1][1] + self.board.vertical_cells - 3, hand[1])
+
+        self.render_hand()
 
     def gravitize(self, dt=0.0):
         if self.board.gravitize():
